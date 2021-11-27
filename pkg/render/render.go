@@ -1,6 +1,7 @@
 package render
 
 import (
+	"bytes"
 	"html/template"
 	"log"
 	"net/http"
@@ -9,24 +10,35 @@ import (
 
 var functions = template.FuncMap{}
 
-func Template(w http.ResponseWriter, tmpl string) {
+// TemplateRenderer TODO: Improve Error Handling
+func TemplateRenderer(w http.ResponseWriter, tmpl string) {
 
 	templateMap, err := GetTemplateMap()
 	if err != nil {
-		log.Println("Error getting template map")
+		log.Fatalln("Error getting template map")
 	}
 
-	templateInstance := templateMap[tmpl]
+	templateInstance, ok := templateMap[tmpl]
 
-	executionError := templateInstance.Execute(w, nil)
-	if executionError != nil {
+	if !ok {
+		log.Fatalln("Trying to render a template that doesn't exist")
+	}
+
+	buf := new(bytes.Buffer)
+
+	_ = templateInstance.Execute(buf, nil)
+
+	_, execError := buf.WriteTo(w)
+
+	//ExecError := templateInstance.Execute(w, nil)
+	if execError != nil {
 		log.Print(err)
 		return
 	}
 }
 
 func GetTemplateMap() (map[string]*template.Template, error) {
-	/* A Function To Get  */
+	/* A Function To Get Template Map With Template Name And type: template.Template instance  */
 	templateCache := map[string]*template.Template{}
 	pages, err := filepath.Glob("./templates/*.page.tmpl")
 	if err != nil {
