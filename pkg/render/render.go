@@ -11,7 +11,7 @@ var functions = template.FuncMap{}
 
 func Template(w http.ResponseWriter, tmpl string) {
 
-	templateMap, err := GetTemplateMap(w)
+	templateMap, err := GetTemplateMap()
 	if err != nil {
 		log.Println("Error getting template map")
 	}
@@ -25,7 +25,7 @@ func Template(w http.ResponseWriter, tmpl string) {
 	}
 }
 
-func GetTemplateMap(w http.ResponseWriter) (map[string]*template.Template, error) {
+func GetTemplateMap() (map[string]*template.Template, error) {
 	/* A Function To Get  */
 	templateCache := map[string]*template.Template{}
 	pages, err := filepath.Glob("./templates/*.page.tmpl")
