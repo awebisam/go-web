@@ -12,6 +12,8 @@ import (
 
 const portNumber = ":8080"
 
+// main TODO: refactor and tidy up.
+// main is the entry point for the application.
 func main() {
 
 	var app config.AppConfig
@@ -22,10 +24,15 @@ func main() {
 	}
 
 	app.TemplateCache = tc
+	app.Debug = true
+
+	repo := handlers.NewRepo(&app)
+	handlers.NewHandlers(repo)
+
 	render.NewTemplates(&app)
 
-	http.HandleFunc("/", handlers.Home)
-	http.HandleFunc("/about/", handlers.About)
+	http.HandleFunc("/", handlers.Repo.Home)
+	http.HandleFunc("/about/", handlers.Repo.About)
 
 	fmt.Printf("Starting server in port %s", portNumber)
 

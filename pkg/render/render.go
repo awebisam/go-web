@@ -18,11 +18,20 @@ func NewTemplates(a *config.AppConfig) {
 }
 
 // TemplateRenderer TODO: Improve Error Handling
+// Tem
 func TemplateRenderer(w http.ResponseWriter, tmpl string) {
+	var templateCache map[string]*template.Template
+	{
+	}
 
-	templateMap := app.TemplateCache
+	if app.Debug {
+		templateCache, _ = CreateTemplateCache()
 
-	templateInstance, ok := templateMap[tmpl]
+	} else {
+		templateCache = app.TemplateCache
+	}
+
+	templateInstance, ok := templateCache[tmpl]
 
 	if !ok {
 		log.Fatalln("Trying to render a template that doesn't exist")
@@ -41,8 +50,8 @@ func TemplateRenderer(w http.ResponseWriter, tmpl string) {
 	}
 }
 
+// CreateTemplateCache creat
 func CreateTemplateCache() (map[string]*template.Template, error) {
-	/* A Function To Get Template Map With Template Name And type: template.Template instance  */
 	templateCache := map[string]*template.Template{}
 	pages, err := filepath.Glob("./templates/*.page.tmpl")
 	if err != nil {
