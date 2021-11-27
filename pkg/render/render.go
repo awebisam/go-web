@@ -2,6 +2,7 @@ package render
 
 import (
 	"bytes"
+	"github.com/awebisam/go-web/pkg/config"
 	"html/template"
 	"log"
 	"net/http"
@@ -10,13 +11,16 @@ import (
 
 var functions = template.FuncMap{}
 
+var app *config.AppConfig
+
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
+
 // TemplateRenderer TODO: Improve Error Handling
 func TemplateRenderer(w http.ResponseWriter, tmpl string) {
 
-	templateMap, err := GetTemplateMap()
-	if err != nil {
-		log.Fatalln("Error getting template map")
-	}
+	templateMap := app.TemplateCache
 
 	templateInstance, ok := templateMap[tmpl]
 
@@ -32,12 +36,12 @@ func TemplateRenderer(w http.ResponseWriter, tmpl string) {
 
 	//ExecError := templateInstance.Execute(w, nil)
 	if execError != nil {
-		log.Print(err)
+		log.Print(execError)
 		return
 	}
 }
 
-func GetTemplateMap() (map[string]*template.Template, error) {
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	/* A Function To Get Template Map With Template Name And type: template.Template instance  */
 	templateCache := map[string]*template.Template{}
 	pages, err := filepath.Glob("./templates/*.page.tmpl")
