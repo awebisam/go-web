@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"github.com/awebisam/go-web/pkg/config"
+	"github.com/awebisam/go-web/pkg/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -18,8 +19,7 @@ func NewTemplates(a *config.AppConfig) {
 }
 
 // TemplateRenderer TODO: Improve Error Handling
-// Tem
-func TemplateRenderer(w http.ResponseWriter, tmpl string) {
+func TemplateRenderer(w http.ResponseWriter, tmpl string, templateData *models.TemplateData) {
 	var templateCache map[string]*template.Template
 	{
 	}
@@ -39,7 +39,7 @@ func TemplateRenderer(w http.ResponseWriter, tmpl string) {
 
 	buf := new(bytes.Buffer)
 
-	_ = templateInstance.Execute(buf, nil)
+	_ = templateInstance.Execute(buf, templateData)
 
 	_, execError := buf.WriteTo(w)
 

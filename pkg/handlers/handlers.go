@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/awebisam/go-web/pkg/config"
+	"github.com/awebisam/go-web/pkg/models"
 	"net/http"
 
 	"github.com/awebisam/go-web/pkg/render"
@@ -30,10 +31,18 @@ func NewHandlers(repo *Repository) {
 
 // About Handler handles about page
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.TemplateRenderer(w, "about.page.tmpl")
+	data := models.TemplateData{
+		StringMap: map[string]string{
+			"title": "About",
+		},
+	}
+	render.TemplateRenderer(w, "about.page.tmpl", &data)
 }
 
 // Home Handler handles home page
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.TemplateRenderer(w, "home.page.tmpl")
+	// might perform some business logic
+
+	// send data to template if required
+	render.TemplateRenderer(w, "home.page.tmpl", &models.TemplateData{})
 }
