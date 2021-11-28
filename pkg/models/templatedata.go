@@ -1,5 +1,6 @@
 package models
 
+// TemplateData TODO: put other data in the future.
 // TemplateData Holds data sent from handlers to renderers
 type TemplateData struct {
 	StringMap map[string]string

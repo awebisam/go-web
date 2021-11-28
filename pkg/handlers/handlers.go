@@ -31,9 +31,13 @@ func NewHandlers(repo *Repository) {
 
 // About Handler handles about page
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
+
+	remoteIP := repo.App.Session.GetString(r.Context(), "remoteIP")
+
 	data := models.TemplateData{
 		StringMap: map[string]string{
 			"title": "About",
+			"ip":    remoteIP,
 		},
 	}
 	render.TemplateRenderer(w, "about.page.tmpl", &data)
@@ -43,6 +47,8 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	// might perform some business logic
 
-	// send data to template if required
+	remoteIP := r.RemoteAddr
+	repo.App.Session.Put(r.Context(), "remoteIP", remoteIP)
+
 	render.TemplateRenderer(w, "home.page.tmpl", &models.TemplateData{})
 }

@@ -2,21 +2,28 @@ package main
 
 import (
 	"fmt"
+	"github.com/alexedwards/scs/v2"
 	"github.com/awebisam/go-web/pkg/config"
+	"github.com/awebisam/go-web/pkg/handlers"
 	"github.com/awebisam/go-web/pkg/render"
 	"log"
 	"net/http"
-
-	"github.com/awebisam/go-web/pkg/handlers"
+	"time"
 )
 
 const portNumber = ":8080"
 
+var app config.AppConfig
+var session *scs.SessionManager
+
 // main TODO: refactor and tidy up.
 // main is the entry point for the application.
 func main() {
+	// change this to false in production.
+	app.Debug = true
 
-	var app config.AppConfig
+	loadSession()
+	app.Session = session
 
 	tc, createCacheError := render.CreateTemplateCache()
 	if createCacheError != nil {
@@ -24,23 +31,28 @@ func main() {
 	}
 
 	app.TemplateCache = tc
-	app.Debug = true
 
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandlers(repo)
-
 	render.NewTemplates(&app)
-
-	http.HandleFunc("/", handlers.Repo.Home)
-	http.HandleFunc("/about/", handlers.Repo.About)
 
 	fmt.Printf("Starting server in port %s", portNumber)
 
-	servingError := http.ListenAndServe(
-		portNumber,
-		nil,
-	)
-	if servingError != nil {
-		return
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
 	}
+
+	err := srv.ListenAndServe()
+	if err != nil {
+		log.Fatal("Error starting server: ", err)
+	}
+}
+
+func loadSession() {
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	session.Cookie.Persist = true
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = app.Debug
 }

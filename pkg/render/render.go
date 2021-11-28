@@ -18,6 +18,11 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
+func AddDefaultData(defaultTemplateData *models.TemplateData) *models.TemplateData {
+
+	return defaultTemplateData
+}
+
 // TemplateRenderer TODO: Improve Error Handling
 func TemplateRenderer(w http.ResponseWriter, tmpl string, templateData *models.TemplateData) {
 	var templateCache map[string]*template.Template
@@ -38,6 +43,8 @@ func TemplateRenderer(w http.ResponseWriter, tmpl string, templateData *models.T
 	}
 
 	buf := new(bytes.Buffer)
+
+	templateData = AddDefaultData(templateData)
 
 	_ = templateInstance.Execute(buf, templateData)
 
