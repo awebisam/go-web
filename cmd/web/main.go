@@ -13,8 +13,10 @@ import (
 
 const portNumber = ":8080"
 
-var app config.AppConfig
-var session *scs.SessionManager
+var (
+	app     config.AppConfig
+	session *scs.SessionManager
+)
 
 // main TODO: refactor and tidy up.
 // main is the entry point for the application.
@@ -36,7 +38,7 @@ func main() {
 	handlers.NewHandlers(repo)
 	render.NewTemplates(&app)
 
-	fmt.Printf("Starting server in port %s", portNumber)
+	fmt.Printf("Starting server on port %s", portNumber)
 
 	srv := &http.Server{
 		Addr:    portNumber,
